@@ -11,7 +11,10 @@ import java.util.List;
 public class PresidentsReaderWriter {
 
 	public static void main(String[] args) {
-		List<President> presidents = readPresidents("presidents.csv");
+		String fileName = "presidents.txt";
+		// String fileName = "presidents.csv";
+
+		List<President> presidents = readPresidents(fileName);
 		printPresidents(presidents);
 
 		List<President> whigs = filterWhigs(presidents);
@@ -117,15 +120,48 @@ public class PresidentsReaderWriter {
 		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 			String line = "";
 			while ((line = br.readLine()) != null) {
-				String[] words = line.split(", ");
-				String firstName = words[1];
-				String middleName = words[2];
-				String lastName = words[3];
-				String party = words[5];
-				int termNumber = Integer.parseInt(words[0]);
-				String[] years = words[4].split("-");
+				String[] parts = line.split(", ");
+				String[] part1 = parts[0].split(" ");
+				int termNumber = Integer.parseInt(part1[0]);
+				String firstName = part1[1];
+				String middleName = "";
+				String lastName = part1[part1.length - 1];
+				if (part1.length == 3) {
+					middleName = "";
+				} else if (part1.length == 4) {
+					middleName = part1[2];
+				} else if (part1.length == 5) {
+					middleName = part1[2] + part1[3];
+
+				}
+
+				String[] part2 = parts[1].split("\\(");
+
+
+				String party = part2[1].substring(0, part2[1].length() - 1);
+				part2[0] = part2[0].replace(" ", "");
+				String[] years = part2[0].split("-");
 				int startYear = Integer.parseInt(years[0]);
-				int endYear = Integer.parseInt(years[1]);
+				int endYear = 0;
+				if (years.length == 1) {
+					endYear = startYear;
+
+				} else {
+					if (years[1].length() == 4) {
+						endYear = Integer.parseInt(years[1]);
+
+					} else if (years[1].length() == 2) {
+						String year = years[0].substring(0, 2) + years[1];
+						endYear = Integer.parseInt(year);
+
+					} else if (years[1].length() == 1) {
+						String year = years[0].substring(0, 3) + years[1];
+						endYear = Integer.parseInt(year);
+
+					}
+
+				}
+
 				President president = new President(firstName, middleName, lastName, party, termNumber, startYear,
 						endYear);
 				presidents.add(president);
