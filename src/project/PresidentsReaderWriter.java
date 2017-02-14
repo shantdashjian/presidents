@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A program that reads the data of all 45 US Presidents from a file
- * , filters them on various criteria, and writes
- * the Republicans and Democrats into two separate files
+ * A program that reads the data of all 45 US Presidents from a file , filters
+ * them on various criteria, and writes the Republicans and Democrats into two
+ * separate files
  *
- * Note: The program can take the input file name as a command line argument
- * but make sure you provide the either the full path or the correct relative path
- * For example: if you are running the program from Terminal and you are inside the bin directory
- * while your file is one level above, your command to run the program would be
- * $ java project/PresidentsReaderWriter ../presidents.txt
+ * Note: The program can take the input file name as a command line argument but
+ * make sure you provide the either the full path or the correct relative path
+ * For example: if you are running the program from Terminal and you are inside
+ * the bin directory while your file is one level above, your command to run the
+ * program would be $ java project/PresidentsReaderWriter ../presidents.txt
  *
  * Also, the program can read from both .csv and .txt files
  *
@@ -28,7 +28,7 @@ public class PresidentsReaderWriter {
 
 	public static void main(String[] args) {
 		String fileName;
-		if (args.length == 1){
+		if (args.length == 1) {
 			fileName = args[0];
 		} else {
 			fileName = "presidents.txt";
@@ -128,41 +128,38 @@ public class PresidentsReaderWriter {
 	}
 
 	public static void writePresidentsToFile(List<President> presidents, String fileName) {
-		try {
-			PrintWriter pw = new PrintWriter(new FileWriter(fileName));
+		try (PrintWriter pw = new PrintWriter(new FileWriter(fileName))) {
 			for (President president : presidents) {
 				pw.println(president.getFirstName() + " " + president.getLastName());
 			}
-
-			pw.close();
 		} catch (IOException ioe) {
-			// TODO: handle exception
+			ioe.printStackTrace();
 		}
 	}
 
 	public static List<President> readPresidentsFromCSV(String fileName) {
-		 List<President> presidents = new ArrayList<>();
-		 try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-			 String line = "";
-			 while ((line = br.readLine()) != null) {
-				 String[] words = line.split(", ");
-				 String firstName = words[1];
-				 String middleName = words[2];
-				 String lastName = words[3];
-				 String party = words[5];
-				 int termNumber = Integer.parseInt(words[0]);
-				 String[] years = words[4].split("-");
-				 int startYear = Integer.parseInt(years[0]);
-				 int endYear = Integer.parseInt(years[1]);
-				 President president = new President(firstName, middleName, lastName,
-						 							party, termNumber, startYear, endYear);
-				 presidents.add(president);
-			 }
-		 } catch (IOException e) {
-			 System.err.println(e);
-			 e.printStackTrace();
-		 }
-		 return presidents;
+		List<President> presidents = new ArrayList<>();
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				String[] words = line.split(", ");
+				String firstName = words[1];
+				String middleName = words[2];
+				String lastName = words[3];
+				String party = words[5];
+				int termNumber = Integer.parseInt(words[0]);
+				String[] years = words[4].split("-");
+				int startYear = Integer.parseInt(years[0]);
+				int endYear = Integer.parseInt(years[1]);
+				President president = new President(firstName, middleName, lastName, party, termNumber, startYear,
+						endYear);
+				presidents.add(president);
+			}
+		} catch (IOException e) {
+			System.err.println(e);
+			e.printStackTrace();
+		}
+		return presidents;
 	}
 
 	public static List<President> readPresidentsFromTXT(String fileName) {
@@ -186,7 +183,6 @@ public class PresidentsReaderWriter {
 				}
 
 				String[] part2 = parts[1].split("\\(");
-
 
 				String party = part2[1].substring(0, part2[1].length() - 1);
 				part2[0] = part2[0].replace(" ", "");
